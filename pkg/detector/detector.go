@@ -5,8 +5,9 @@ import (
 )
 
 type Detector interface {
-	Init()
+	Init() error
 	Detect(x *dataset.SimpleDatapoint) *Result
+	Save(string)
 }
 
 type Result struct {
