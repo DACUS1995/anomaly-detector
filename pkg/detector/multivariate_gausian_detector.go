@@ -10,6 +10,11 @@ import (
 type MultivariateGaussianDetector struct {
 	parametersPath *string
 	datasetPath    *string
+	meanArr        []float32
+	covMatrix      [][]float32
+}
+
+type Parameters struct {
 }
 
 func NewMultivariateGaussianDetector(parametersPath *string, datasetPath *string) (*MultivariateGaussianDetector, error) {
@@ -31,7 +36,7 @@ func NewMultivariateGaussianDetector(parametersPath *string, datasetPath *string
 func (detector *MultivariateGaussianDetector) Init() {
 	if detector.parametersPath == nil {
 		dataset := dataset.NewCSVDataset(*detector.datasetPath)
-		detector.computeParamters(dataset)
+		detector.computeParameters(dataset)
 	} else {
 		detector.loadParameters()
 	}
@@ -41,22 +46,39 @@ func (detector *MultivariateGaussianDetector) Detect(x *dataset.SimpleDatapoint)
 
 }
 
-func (detector *MultivariateGaussianDetector) computeParamters(dataset dataset.Dataset) {
+func (detector *MultivariateGaussianDetector) computeParameters(dataset dataset.Dataset) {
 	sampleSize := len(dataset.GetSamples()[0].Values)
-
 	meanArr := make([]float32, sampleSize)
 	covMatrix := make([][]float32, sampleSize)
 	for idx := range covMatrix {
 		covMatrix[idx] = make([]float32, sampleSize)
 	}
 
+	// Compute mean
 	for _, elem := range dataset.GetSamples() {
 		for idx, value := range elem.Values {
 			meanArr[idx] += value
 		}
 	}
+
+	// Compute covariance matrix
+	for i := 0; i < sampleSize; i++ {
+		for j := 0; j < sampleSize; j++ {
+			var expectedVar float32 = 0
+			for _, elem := range dataset.GetSamples() {
+				firstElement := elem.Values[i] - meanArr[i]
+				secondElement := elem.Values[j] - meanArr[j]
+				expectedVar += firstElement * secondElement
+			}
+			covMatrix[i][j] = expectedVar / float32(sampleSize)
+		}
+	}
+
+	detector.meanArr = meanArr
+	detector.covMatrix = covMatrix
+
 }
 
 func (detector *MultivariateGaussianDetector) loadParameters() {
-	log.Println("Detector loaded.")
+	log.Println("Detector paramters loaded.")
 }
