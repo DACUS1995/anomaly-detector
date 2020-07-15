@@ -1,0 +1,3 @@
+- Isolation Forests
+- Random Cut Forest
+- VAE (computing the difference between input and the reconstructed array)
