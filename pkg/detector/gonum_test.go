@@ -8,6 +8,8 @@ import (
 	"gonum.org/v1/gonum/mat"
 )
 
+//http://gregorygundersen.com/blog/2019/10/30/scipy-multivariate/
+//https://godoc.org/gonum.org/v1/gonum
 func TestCovarianceInverse(t *testing.T) {
 	a := mat.NewDense(2, 2, []float64{
 		4, 0,

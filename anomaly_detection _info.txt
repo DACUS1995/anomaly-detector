@@ -1,0 +1,12 @@
+- Isolation Forests
+- Random Cut Forest
+- VAE (computing the difference between input and the reconstructed array)
+
+Algorithms for anomaly detection:
+ - For metrics (number  of  running  processes,  available  memory, context  switches  per  second,  processor  load,  free  disk  space, number  of  logged-in  users, and  many  others.)
+	* moving z-score
+	* discord discovery
+ - In logs
+
+Resources:
+ - https://github.com/yzhao062/anomaly-detection-resources
