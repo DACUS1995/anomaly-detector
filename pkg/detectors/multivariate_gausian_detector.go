@@ -1,4 +1,4 @@
-package detector
+package detectors
 
 import (
 	"encoding/json"

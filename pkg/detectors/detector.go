@@ -1,4 +1,4 @@
-package detector
+package detectors
 
 import (
 	"github.com/DACUS1995/datacenter-anomaly-detector/pkg/dataset"
