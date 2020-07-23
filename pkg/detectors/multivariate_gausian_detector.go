@@ -8,7 +8,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/DACUS1995/datacenter-anomaly-detector/pkg/dataset"
+	"github.com/DACUS1995/anomaly-detector/pkg/dataset"
 )
 
 type MultivariateGaussianDetector struct {

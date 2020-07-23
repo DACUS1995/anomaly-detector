@@ -1,8 +1,8 @@
 package external
 
 import (
-	"github.com/DACUS1995/datacenter-anomaly-detector/pkg/dataset"
-	"github.com/DACUS1995/datacenter-anomaly-detector/pkg/detectors"
+	"github.com/DACUS1995/anomaly-detector/pkg/dataset"
+	"github.com/DACUS1995/anomaly-detector/pkg/detectors"
 )
 
 type Client struct {
