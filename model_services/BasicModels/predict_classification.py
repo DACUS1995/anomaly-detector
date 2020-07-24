@@ -1,22 +1,22 @@
-from utils import transform_image
 from model_handler import ModelHandler
+import numpy as np
 
+class_index_map = [
+	"nominal",
+	"anomaly"
+]
 
 def get_label(predicted_idx):
-	# Need implementation
-	pass
+	predicted_labels = np.apply_along_axis(lambda x: class_index_map[x], 0, predicted_idx)
+	return predicted_labels
 
-def get_classification_prediction(raw_input, type="image"):
-	tensor = None
-	
-	if type == "image":
-		tensor = transform_image(image_bytes=raw_input)
-	else:
-		tensor = torch.tensor([raw_input])
-	assert tensor != None
+def get_classification_prediction(input):
+	input = np.array(input)
+
+	if len(input.shape) == 1:
+		input = input.reshape((1, -1))
 
 	model = ModelHandler.get_model()
-	outputs = model.forward(tensor)
-	_, y_hat = outputs.max(1)
-	predicted_idx = str(y_hat.item())
-	return predicted_idx, get_label(predicted_idx)
+	predicted_idx = model.predict(input)
+	predicted_labels = get_label(outputs)
+	return predicted_idx.tolist(), get_label(outputs).tolist()

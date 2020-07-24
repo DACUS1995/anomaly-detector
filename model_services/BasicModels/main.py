@@ -1,10 +1,6 @@
 import json
-from typing import List
+from typing import List, Optional
 
-import torch
-from torchvision import models
-import torchvision.transforms as transforms
-from PIL import Image
 from fastapi import FastAPI, HTTPException, File, UploadFile
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
@@ -12,7 +8,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from config import Config
 from predict_classification import get_classification_prediction
 
-device = torch.device(Config.device)
 app = FastAPI()
 
 origins = [
@@ -27,15 +22,20 @@ app.add_middleware(
 	allow_headers=["*"],
 )
 
+class Data(BaseModel):
+	data_point: List[float]
+
+
 @app.post("/predict")
-async def predict(file: UploadFile = File(...)):
-	if file is None:
-		raise HTTPException(status_code=404, detail="No file detected!")
+async def predict(data: Data):
+	if len(data) == 0:
+		raise HTTPException(status_code=404, detail="Empty data point sent!")
 
-	file_bytes = await file.read()
-	class_id, class_name = get_classification_prediction(raw_input=file_bytes)
-	return jsonify({"class_id": class_id, "class_name": class_name})
+	class_id, class_name = get_classification_prediction(input=data)
+	return jsonify({"class_id": class_id[0], "class_name": class_name[0]})
 
+
+# TODO Optimize this using vectorization based batch processing
 @app.post("/batchpredict")
 async def batch_predict(files: List[UploadFile] = File(...)):
 	if len(files) == 0:
@@ -58,7 +58,7 @@ async def root():
 
 
 def main():
-	print("running")
+	print(f"Running service: {Config.service_name}")
 
 
 if __name__ == "__main__":

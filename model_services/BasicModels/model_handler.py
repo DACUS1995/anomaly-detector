@@ -1,9 +1,11 @@
+from sklearn.tree import DecisionTreeClassifier
+
 class ModelHandler:
 	__model = None
 	@staticmethod 
-	def get_model():
+	def get_model(name):
 		if ModelHandler.__model == None:
-			ModelHandler()
+			ModelHandler(name)
 		return ModelHandler.__model
 
 	def __init__(self):

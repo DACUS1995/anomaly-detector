@@ -1,5 +1,4 @@
 from collections import OrderedDict
 
 class Config:
-	device = "cuda"
-	port = 5000
+	service_name: "Basic detection"
