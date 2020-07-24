@@ -23,7 +23,7 @@ app.add_middleware(
 )
 
 class Data(BaseModel):
-	data_point: List[float]
+	values: List[float]
 
 
 @app.post("/predict")
@@ -31,7 +31,7 @@ async def predict(data: Data):
 	if len(data) == 0:
 		raise HTTPException(status_code=404, detail="Empty data point sent!")
 
-	class_id, class_name = get_classification_prediction(input=data)
+	class_id, class_name = get_classification_prediction(input=data.values)
 	return jsonify({"class_id": class_id[0], "class_name": class_name[0]})
 
 

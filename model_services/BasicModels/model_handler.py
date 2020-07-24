@@ -8,7 +8,8 @@ class ModelHandler:
 			ModelHandler(name)
 		return ModelHandler.__model
 
-	def __init__(self):
+	# TODO Add support for multiple model types 
+	def __init__(self, name):
 		""" Virtually private constructor. """
 		if ModelHandler.__model != None:
 			raise Exception("This class is a singleton!")
