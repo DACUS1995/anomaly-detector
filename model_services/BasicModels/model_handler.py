@@ -1,22 +1,32 @@
 from sklearn.tree import DecisionTreeClassifier
+from enum import Enum
+from joblib import dump, load
+
+
+class ModelTypes(Enum):
+	DECISION_TREE_CLASSIFIER = 1
+
 
 class ModelHandler:
 	__model = None
 	@staticmethod 
-	def get_model(name):
+	def get_model(model_type):
 		if ModelHandler.__model == None:
-			ModelHandler(name)
+			ModelHandler(model_type)
 		return ModelHandler.__model
 
-	# TODO Add support for multiple model types 
-	def __init__(self, name):
+	def __init__(self, model_type):
 		""" Virtually private constructor. """
 		if ModelHandler.__model != None:
 			raise Exception("This class is a singleton!")
 		else:
-			# Need implementation
 			model = None
-			model.to(device)
-			model.eval()
+
+			if model_type == ModelTypes.DECISION_TREE_CLASSIFIER:
+				model = load("decision_tree_classifier.joblib")
+			else:
+				raise Exception("Unknown model type requested")
+			
+			assert model is not None
 			ModelHandler.__model = model
 			
