@@ -23,7 +23,7 @@ class ModelHandler:
 			model = None
 
 			if model_type == ModelTypes.DECISION_TREE_CLASSIFIER:
-				model = load("decision_tree_classifier.joblib")
+				model = load("./saved_models/decision_tree_classifier.joblib")
 			else:
 				raise Exception("Unknown model type requested")
 			

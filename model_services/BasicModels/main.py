@@ -25,32 +25,38 @@ app.add_middleware(
 class Data(BaseModel):
 	values: List[float]
 
+class Result(BaseModel):
+	class_id: str
+	class_name: str
 
-@app.post("/predict")
+
+@app.post("/predict", response_model=Result)
 async def predict(data: Data):
-	if len(data) == 0:
+	if len(data.values) == 0:
 		raise HTTPException(status_code=404, detail="Empty data point sent!")
 
 	class_id, class_name = get_classification_prediction(input=data.values)
-	return jsonify({"class_id": class_id[0], "class_name": class_name[0]})
+	print(class_id)
+	print(class_name)
+	return Result(class_id=class_id[0], class_name=class_name[0])
 
 
 # TODO Optimize this using vectorization based batch processing
-@app.post("/batchpredict")
-async def batch_predict(files: List[UploadFile] = File(...)):
-	if len(files) == 0:
-		raise HTTPException(status_code=404, detail="No file detected!")
+# @app.post("/batchpredict")
+# async def batch_predict(files: List[UploadFile] = File(...)):
+# 	if len(files) == 0:
+# 		raise HTTPException(status_code=404, detail="No file detected!")
 
-	results = []
-	for file in files:
-		file_bytes = await file.read()
-		class_id, class_name = get_classification_prediction(raw_input=file_bytes)
-		results.append({
-			"class_id": class_id,
-			"class_name": class_name
-		})
+# 	results = []
+# 	for file in files:
+# 		file_bytes = await file.read()
+# 		class_id, class_name = get_classification_prediction(raw_input=file_bytes)
+# 		results.append({
+# 			"class_id": class_id,
+# 			"class_name": class_name
+# 		})
 	
-	return jsonify(results)
+# 	return jsonify(results)
 
 @app.get("/")
 async def root():
