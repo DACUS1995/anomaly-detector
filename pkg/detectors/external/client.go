@@ -8,16 +8,21 @@ import (
 
 	"github.com/DACUS1995/anomaly-detector/pkg/dataset"
 	"github.com/DACUS1995/anomaly-detector/pkg/detectors"
+	"gopkg.in/errgo.v2/fmt/errors"
 )
 
 type Client struct {
 	url string
 }
 
-func NewClient(url string) *Client {
-	return &Client{
-		url: url,
+func NewClient(url string) (*Client, error) {
+	newClient := &Client{url: url}
+	err := newClient.Init()
+	if err != nil {
+		return nil, errors.Wrap(err)
 	}
+
+	return newClient, nil
 }
 
 func (client *Client) Init() error {
@@ -43,7 +48,7 @@ func (client *Client) Detect(x *dataset.SimpleDatapoint) *detectors.Result {
 	json.Unmarshal([]byte(body), &results)
 
 	return &detectors.Result{
-		IsAnomaly: results["class_id"].(bool),
-		Details:   "",
+		IsAnomaly: results["class_id"].(float64) == 1,
+		Details:   results["class_name"].(string),
 	}
 }

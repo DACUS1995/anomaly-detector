@@ -7,7 +7,6 @@ import (
 type Detector interface {
 	Init() error
 	Detect(x *dataset.SimpleDatapoint) *Result
-	Save(string)
 }
 
 type Result struct {
