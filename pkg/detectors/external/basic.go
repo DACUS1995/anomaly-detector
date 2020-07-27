@@ -3,7 +3,7 @@ package external
 import "gopkg.in/errgo.v2/fmt/errors"
 
 type BasicDetector struct {
-	*Client
+	*RestClient
 }
 
 func NewBasicDetector(url string) (*BasicDetector, error) {
