@@ -26,7 +26,7 @@ class Data(BaseModel):
 	values: List[float]
 
 class BatchData(BaseModel):
-	batch: List[Data]
+	batch: List[List[Data]]
 
 class Result(BaseModel):
 	class_id: str
@@ -44,17 +44,18 @@ async def predict(data: Data):
 	class_id, class_name = get_classification_prediction(input=data.values)
 	return Result(class_id=class_id[0], class_name=class_name[0])
 
-
-# TODO Optimize this using vectorization based batch processing
+#TODO test this
 @app.post("/detect/batch", response_model=BatchResults)
 async def batch_predict(batchData: BatchData):
 	if len(batchData.values) == 0:
 		raise HTTPException(status_code=404, detail="Empty data batch point sent!")
 
+	class_ids, class_names = get_classification_prediction(batchData.batch)
+	assert len(class_ids) == len(class_names)
+
 	results = []
-	for data in batchData.batch:
-		file_bytes = await file.read()
-		class_id, class_name = get_classification_prediction(raw_input=file_bytes)
+	for idx in range(len(class_ids)):
+		class_id, class_name = class_ids[idx], class_names[idx]
 		results.append({
 			"class_id": class_id,
 			"class_name": class_name
