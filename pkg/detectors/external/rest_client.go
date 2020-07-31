@@ -15,14 +15,14 @@ type RestClient struct {
 	url string
 }
 
-func NewClient(url string) (*RestClient, error) {
-	newClient := &RestClient{url: url}
-	err := newClient.Init()
+func NewRestClient(url string) (*RestClient, error) {
+	NewRestClient := &RestClient{url: url}
+	err := NewRestClient.Init()
 	if err != nil {
 		return nil, errors.Wrap(err)
 	}
 
-	return newClient, nil
+	return NewRestClient, nil
 }
 
 func (client *RestClient) Init() error {

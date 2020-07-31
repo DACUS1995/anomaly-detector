@@ -7,7 +7,7 @@ type BasicDetector struct {
 }
 
 func NewBasicDetector(url string) (*BasicDetector, error) {
-	client, err := NewClient(url)
+	client, err := NewRestClient(url)
 	if err != nil {
 		return nil, errors.Wrap(err)
 	}
