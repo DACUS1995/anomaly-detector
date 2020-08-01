@@ -53,7 +53,7 @@ func (client *RestClient) Detect(x *dataset.SimpleDatapoint) *detectors.Result {
 	}
 }
 
-func (client *RestClient) BatchDetect(x []dataset.SimpleDatapoint) []detectors.Result {
+func (client *RestClient) BatchDetect(x []dataset.BatchDatapoint) []detectors.Result {
 	buf := new(bytes.Buffer)
 	json.NewEncoder(buf).Encode(x)
 

@@ -7,5 +7,9 @@ type Dataset interface {
 }
 
 type SimpleDatapoint struct {
-	Values []float32
+	Values []float32 `json:"values"`
+}
+
+type BatchDatapoint struct {
+	Values [][]float32 `json:"values"`
 }

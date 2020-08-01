@@ -26,7 +26,7 @@ class Data(BaseModel):
 	values: List[float]
 
 class BatchData(BaseModel):
-	batch: List[List[Data]]
+	values: List[List[float]]
 
 class Result(BaseModel):
 	class_id: str
@@ -50,7 +50,7 @@ async def batch_predict(batchData: BatchData):
 	if len(batchData.values) == 0:
 		raise HTTPException(status_code=404, detail="Empty data batch point sent!")
 
-	class_ids, class_names = get_classification_prediction(batchData.batch)
+	class_ids, class_names = get_classification_prediction(batchData.values)
 	assert len(class_ids) == len(class_names)
 
 	results = []
