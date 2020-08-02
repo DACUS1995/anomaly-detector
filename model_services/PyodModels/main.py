@@ -69,7 +69,9 @@ async def batch_predict(batchData: BatchData):
 
 @app.post("/init")
 async def predict(data: InitData):
-	pass
+	class_id, class_name = get_classification_prediction(input=data.values)
+	return Result(class_id=class_id[0], class_name=class_name[0])
+
 
 @app.get("/")
 async def root():
