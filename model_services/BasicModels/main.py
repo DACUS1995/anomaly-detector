@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from config import Config
 from predict_classification import get_classification_prediction
+from predict_classification import train_classifier
 
 app = FastAPI()
 
@@ -44,8 +45,8 @@ async def predict(data: Data):
 	if len(data.values) == 0:
 		raise HTTPException(status_code=404, detail="Empty data point sent!")
 
-	class_id, class_name = get_classification_prediction(input=data.values)
-	return Result(class_id=class_id[0], class_name=class_name[0])
+	class_ids, class_names = get_classification_prediction(input=data.values)
+	return Result(class_id=class_ids[0], class_name=class_names[0])
 
 
 @app.post("/detect/batch", response_model=BatchResults)
@@ -67,7 +68,7 @@ async def batch_predict(batchData: BatchData):
 	return BatchResults(results=results)
 
 
-@app.post("/init")
+@app.post("/train")
 async def predict(data: InitData):
 	pass
 

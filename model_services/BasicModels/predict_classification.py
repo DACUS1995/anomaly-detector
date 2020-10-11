@@ -8,7 +8,7 @@ class_index_map = [
 	"anomaly"
 ]
 
-def get_label(predicted_idx):
+def _get_label(predicted_idx):
 	predicted_labels = map(lambda x: class_index_map[x], predicted_idx)
 	return list(predicted_labels)
 
@@ -20,5 +20,8 @@ def get_classification_prediction(input):
 
 	model = ModelHandler.get_model(Config.model_type)
 	predicted_idx = model.predict(input)
-	predicted_labels = get_label(predicted_idx.tolist())
+	predicted_labels = _get_label(predicted_idx.tolist())
 	return predicted_idx.tolist(), predicted_labels
+
+def train_classifier():
+	raise Exception("Not implemented")
