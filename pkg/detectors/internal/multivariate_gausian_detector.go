@@ -60,7 +60,7 @@ func (detector *MultivariateGaussianDetector) Detect(x *dataset.SimpleDatapoint)
 }
 
 func (detector *MultivariateGaussianDetector) Save() {
-
+	detector.saveParamters(detector.parametersPath)
 }
 
 func (detector *MultivariateGaussianDetector) computeParameters(dataset dataset.Dataset) {
@@ -115,4 +115,22 @@ func (detector *MultivariateGaussianDetector) loadParameters() {
 	json.Unmarshal(byteValue, &detector.parameters)
 
 	log.Println("Detector loaded.")
+}
+
+func (detector *MultivariateGaussianDetector) saveParamters(savePath *string) error {
+	jsonFile, err := os.Open(*savePath)
+	if err != nil {
+		fmt.Print(err.Error())
+		return err
+	}
+	defer jsonFile.Close()
+
+	byteValue, err := json.Marshal(detector.parameters)
+	if err != nil {
+		fmt.Print(err.Error())
+		return err
+	}
+
+	err = ioutil.WriteFile(*savePath, byteValue, os.ModePerm)
+	return err
 }
