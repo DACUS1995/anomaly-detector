@@ -57,13 +57,14 @@ func (detector *MultivariateGaussianDetector) Init() error {
 	return nil
 }
 
-func (detector *MultivariateGaussianDetector) Detect(x *dataset.SimpleDatapoint) {
+
+func (detector *MultivariateGaussianDetector) DetectProb(x *dataset.SimpleDatapoint) float32 {
 	var detCovMatrix float64 = 0
 	invConvMatrix := make([][]float64, len(detector.parameters.CovMatrix))
 	k := len(detector.parameters.MeanArr)
 
-	x_f64 := make([]float64, len(x.Values))
-	for i, val := range x.Values {
+	x_f64 := make([]float64, len(x.Features))
+	for i, val := range x.Features {
 		x_f64[i] = float64(val)
 	}
 
@@ -84,12 +85,19 @@ func (detector *MultivariateGaussianDetector) Detect(x *dataset.SimpleDatapoint)
 	prob := fraction * math.Pow(math.E, eExponent)
 }
 
+
+func (detector *MultivariateGaussianDetector) Detect(x *dataset.SimpleDatapoint) bool {
+	return detector.DetectProb(x) > detector.parameters.Threshold
+}
+
+
 func (detector *MultivariateGaussianDetector) Save() {
 	detector.saveParamters(detector.parametersPath)
 }
 
+
 func (detector *MultivariateGaussianDetector) computeParameters(dataset dataset.Dataset) {
-	sampleSize := len(dataset.GetSamples()[0].Values)
+	sampleSize := len(dataset.GetSamples()[0].Features)
 
 	// Init parameters
 	meanArr := make([]float32, sampleSize)
@@ -108,7 +116,7 @@ func (detector *MultivariateGaussianDetector) computeParameters(dataset dataset.
 
 	// Compute mean
 	for _, elem := range dataset.GetSamples() {
-		for idx, value := range elem.Values {
+		for idx, value := range elem.Features {
 			meanArr[idx] += value
 		}
 	}
@@ -118,18 +126,27 @@ func (detector *MultivariateGaussianDetector) computeParameters(dataset dataset.
 		for j := 0; j < sampleSize; j++ {
 			var expectedVar float32 = 0
 			for _, elem := range dataset.GetSamples() {
-				firstElement := elem.Values[i] - meanArr[i]
-				secondElement := elem.Values[j] - meanArr[j]
+				firstElement := elem.Features[i] - meanArr[i]
+				secondElement := elem.Features[j] - meanArr[j]
 				expectedVar += firstElement * secondElement
 			}
 			covMatrix[i][j] = expectedVar / float32(sampleSize)
 		}
 	}
 
-	// TODO Compute the threshold https://towardsdatascience.com/wondering-how-to-build-an-anomaly-detection-model-87d28e50309
+	// Compute the threshold https://towardsdatascience.com/wondering-how-to-build-an-anomaly-detection-model-87d28e50309
+	threshold = detector.computeParameters(dataset)
 
 	detector.parameters.MeanArr = meanArr
 	detector.parameters.CovMatrix = covMatrix
+}
+
+// TODO compute tghe probs for each datapoint and then use them to pick the optimatl threshold based on the F1 score
+func (detector *MultivariateGaussianDetector) computeThreshold(dataset dataset.Dataset) float32 {
+	F1 := float32(0)
+
+	min, max := MinMax()
+	stepSize := 
 }
 
 func (detector *MultivariateGaussianDetector) loadParameters() {
@@ -162,4 +179,18 @@ func (detector *MultivariateGaussianDetector) saveParamters(savePath *string) er
 
 	err = ioutil.WriteFile(*savePath, byteValue, os.ModePerm)
 	return err
+}
+
+func MinMax(array []float32) (float32, float32) {
+	var max float32 = array[0]
+	var min float32 = array[0]
+	for _, value := range array {
+		if max < value {
+			max = value
+		}
+		if min > value {
+			min = value
+		}
+	}
+	return min, max
 }
